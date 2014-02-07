@@ -39,19 +39,6 @@ Delete a query parameter by passing false as the second argument after the key.
 url.query('key',false);
 ```
 
-Limitations
------------
-
-There are perfectly acceptable scenarios which are not possible in Qurl due to known
-limitations. Some of these include:
-
-+ Nested queries
-+ Special characters
-+ Arrays
-
-If you'd like to make this library more supportive, please send a pull request with the
-update without breaking existing functionality.
-
 
 [1]: https://developer.mozilla.org/en-US/docs/Web/Guide/API/DOM/Manipulating_the_browser_history
 [2]: https://developer.mozilla.org/en-US/docs/Web/API/Window.location
