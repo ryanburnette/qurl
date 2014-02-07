@@ -43,7 +43,7 @@ var Qurl
 
     pairs = string.split('&');
     pairs.forEach(function (p) {
-      var pair = p.split('=')
+      var pair = decodeURIComponent(p).split('=')
         , key = pair[0]
         , val = pair[1]
         ;
@@ -87,7 +87,7 @@ var Qurl
       } else {
         // for all parameter values, including null and false
         // ?foo=null&bar=baz
-        pairs.push(key + '=' + (query[key] || '')); 
+        pairs.push(encodeURIComponent(key) + '=' + encodeURIComponent(query[key] || '')); 
       }
     });
 
