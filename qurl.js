@@ -75,20 +75,27 @@ var Qurl
     history.pushState({}, document.title, string);
   }
 
-  function getSearchString(search) {
-    var string = '?'
-      , i = 0
+  function getSearchString(query) {
+    var pairs = []
       ;
 
-    Object.keys(search).forEach(function (key) {
-      if ( i !== 0 ) {
-        string = string + '&';
+    Object.keys(query).forEach(function (key) {
+      if ('undefined' === typeof query[key]) {
+        // for cases where the parameter doesn't need a value
+        // ?foo&bar=baz
+        pairs.push(key);
+      } else {
+        // for all parameter values, including null and false
+        // ?foo=null&bar=baz
+        pairs.push(key + '=' + (query[key] || '')); 
       }
-      string = string + key + '=' + search[key];
-      i = i + 1;
     });
 
-    return string;
+    if (0 === pairs.length) {
+      return '';
+    } else {
+      return '?' + pairs.join('&')
+    }
   }
   
   Qurl.create = Qurl;
