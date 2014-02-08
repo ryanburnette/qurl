@@ -87,7 +87,7 @@ var Qurl
     });
 
     if ( pairs.length === 0 ) {
-      return '';
+      return '?';
     }
     else {
       return '?' + pairs.join('&');
