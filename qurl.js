@@ -42,7 +42,7 @@ var Qurl
 
     pairs = string.split('&');
     pairs.forEach(function (p) {
-      var pair = p.split('=')
+      var pair = decodeURIComponent(p).split('=')
         , key = pair[0]
         , val = pair[1]
         ;
@@ -81,9 +81,8 @@ var Qurl
     Object.keys(query).forEach(function (key) {
       if ( typeof query[key] === 'undefined' ) {
         pairs.push(key);
-      } 
-      else {
-        pairs.push(key + '=' + (query[key] || '')); 
+      } else {
+        pairs.push(encodeURIComponent(key) + '=' + encodeURIComponent(query[key] || '')); 
       }
     });
 
