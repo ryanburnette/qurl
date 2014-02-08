@@ -5,12 +5,11 @@ var Qurl
   'use strict';
   
   var proto
-    , w = window
     ;
  
-  Qurl = function (w) {
+  Qurl = function () {
     if ( !(this instanceof Qurl) ) {
-      return new Qurl(w);
+      return new Qurl();
     }
   }
  
@@ -36,8 +35,8 @@ var Qurl
       , obj = {}
       ;
 
-    if ( !string) {
-      return {};
+    if ( !string ) {
+      return obj;
     }
     string = string.replace('?','');
 
@@ -80,21 +79,19 @@ var Qurl
       ;
 
     Object.keys(query).forEach(function (key) {
-      if ('undefined' === typeof query[key]) {
-        // for cases where the parameter doesn't need a value
-        // ?foo&bar=baz
+      if ( typeof query[key] === 'undefined' ) {
         pairs.push(key);
-      } else {
-        // for all parameter values, including null and false
-        // ?foo=null&bar=baz
+      } 
+      else {
         pairs.push(key + '=' + (query[key] || '')); 
       }
     });
 
-    if (0 === pairs.length) {
+    if ( pairs.length === 0 ) {
       return '';
-    } else {
-      return '?' + pairs.join('&')
+    }
+    else {
+      return '?' + pairs.join('&');
     }
   }
   
