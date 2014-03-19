@@ -71,7 +71,9 @@ var Qurl
   }
 
   function setSearchString(string) {
-    history.pushState({}, document.title, string);
+    if ( history.pushState ) {
+      history.pushState({}, document.title, string);
+    }
   }
 
   function getSearchString(query) {

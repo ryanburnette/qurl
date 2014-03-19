@@ -42,6 +42,9 @@ url.query('key',false);
 Version History
 ---------------
 
++ v0.1.2 - 2014-03-19
+  + Only use pushState when supported
+
 + v0.1.1 - 2014-02-08
   + Fixed a bug where the last query parameter could not be removed
 
