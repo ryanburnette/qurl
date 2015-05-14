@@ -29,13 +29,11 @@
         typeofValue = typeof value;
 
     if (typeofKey === 'string') {
-      if (typeofValue === 'string') {
-        return setParamValue(key, value);
-      }
-
       if (typeofValue === 'undefined') {
         return getParamValue(key);
       }
+
+      return setParamValue(key, value);
     } else if (typeofKey === 'object') {
       return setParamsStringFromObject(key);
     }
@@ -152,9 +150,8 @@
 
     function processKeyParts (keyParts, value, constructedParam) {
       var keyPart, keyNameParts, keyNamePart, keyArrayIndexPart,
-          keyArrayIndex, keyPartValue,
-          typeofConstructedParam = toString(constructedParam),
-          finalPart = keyParts.length === 1;
+          keyArrayIndex, keyPartValue, finalPart,
+          typeofConstructedParam = toString(constructedParam);
 
       keyPart = keyParts.shift();
 
@@ -162,7 +159,7 @@
       keyArrayIndexPart = keyNameParts[1];
       keyNamePart = keyNameParts[0];
 
-      keyPartValue = finalPart ? value : (keyArrayIndexPart ? [] : {});
+      keyPartValue = keyArrayIndexPart ? [] : {};
       constructedParam = constructedParam || params[keyNamePart] || (params[keyNamePart] = keyPartValue);
 
       if (keyArrayIndexPart) {
@@ -170,8 +167,10 @@
         keyParts = [].concat(keyArrayIndex, keyParts);
       }
 
+      finalPart = !keyParts.length;
+
       if (typeofConstructedParam === '[object Array]' || typeofConstructedParam === '[object Object]') {
-        constructedParam = constructedParam[keyNamePart] || (constructedParam[keyNamePart] = keyPartValue);
+        constructedParam = constructedParam[keyNamePart] || (constructedParam[keyNamePart] = finalPart ? value : keyPartValue);
       }
 
       if (!finalPart) {
