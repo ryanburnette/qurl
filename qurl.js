@@ -7,23 +7,6 @@
 
   }
 
-  Qurl.prototype.getScopedQueryParam = function (params) {
-    var i, max, paramName,
-        paramsObj = {};
-
-    if (typeof params === 'string') {
-      return getScopedQueryParam(params);
-    } else if (toString(params) === '[object Array]') {
-      for (i = 0, max = params.length; i < max; i += 1) {
-        paramName = params[i];
-
-        paramsObj[paramName] = getScopedQueryParam(paramName);
-      }
-    }
-
-    return paramsObj;
-  };
-
   Qurl.prototype.query = function (key, value) {
     var typeofKey = typeof key,
         typeofValue = typeof value;
@@ -41,9 +24,22 @@
     return getParams();
   };
 
-  function getScopedQueryParam (param) {
-    return new ScopedQueryParam(param);
-  }
+  Qurl.prototype.remove = function (keys) {
+    var i, max, params;
+
+    keys = toString(keys) === '[object Array]' ? keys : [keys];
+    params = getParams();
+
+    for (i = 0, max = keys.length; i < max; i += 1) {
+      delete params[keys[i]];
+    }
+
+    setParamsStringFromObject(params);
+  };
+
+  Qurl.prototype.removeAll = function () {
+    setParamsStringFromObject({});
+  };
 
   function setParamValue (key, value) {
     var params = getParams();
@@ -138,6 +134,8 @@
     for (i = 0, max = parameters.length; i < max; i += 1) {
       decodedParameter = decodeURIComponent(parameters[i]);
 
+      if (!decodedParameter) { continue; }
+
       parameterParts = decodedParameter.split('=');
       keyParts = parameterParts[0].split('.');
       value = parameterParts[1];
@@ -159,9 +157,6 @@
       keyArrayIndexPart = keyNameParts[1];
       keyNamePart = keyNameParts[0];
 
-      keyPartValue = keyArrayIndexPart ? [] : {};
-      constructedParam = constructedParam || params[keyNamePart] || (params[keyNamePart] = keyPartValue);
-
       if (keyArrayIndexPart) {
         keyArrayIndex = keyArrayIndexPart.slice(0, -1);
         keyParts = [].concat(keyArrayIndex, keyParts);
@@ -169,8 +164,11 @@
 
       finalPart = !keyParts.length;
 
+      keyPartValue = finalPart ? value : (keyArrayIndexPart ? [] : {});
+      constructedParam = constructedParam || params[keyNamePart] || (params[keyNamePart] = keyPartValue);
+
       if (typeofConstructedParam === '[object Array]' || typeofConstructedParam === '[object Object]') {
-        constructedParam = constructedParam[keyNamePart] || (constructedParam[keyNamePart] = finalPart ? value : keyPartValue);
+        constructedParam = constructedParam[keyNamePart] || (constructedParam[keyNamePart] = keyPartValue);
       }
 
       if (!finalPart) {
@@ -181,12 +179,6 @@
 
   function toOriginalType (s) {
     return s === 'true' ? true : s === 'false' ? false : !isNaN(s) ? +s : s;
-  }
-
-  function ScopedQueryParam (param) {
-    this.update = function (value) {
-      setParamValue(param, value);
-    };
   }
 
   if (typeof module !== 'undefined' && 'exports' in module) {
