@@ -189,7 +189,7 @@
     var prop;
 
     for (prop in objToMerge) {
-      if (objToMerge.hasOwnProperty(prop)) { continue; }
+      if (!objToMerge.hasOwnProperty(prop)) { continue; }
       if (obj[prop] && !override) { continue; }
 
       obj[prop] = objToMerge[prop];
