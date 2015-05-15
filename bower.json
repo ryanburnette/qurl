@@ -4,7 +4,8 @@
   "version": "0.1.2",
   "homepage": "https://github.com/ryanburnette/Qurl",
   "authors": [
-    "Ryan Burnette <ryan.burnette@gmail.com>"
+    "Ryan Burnette <ryan.burnette@gmail.com>",
+    "Rob PW <rwhite@keystonesoftware.co.uk>"
   ],
   "description": "A browser JavaScript library for getting and setting query parameters.",
   "keywords": [
