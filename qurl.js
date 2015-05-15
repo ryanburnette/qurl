@@ -7,7 +7,7 @@
 
   }
 
-  Qurl.prototype.query = function (key, value) {
+  Qurl.prototype.query = function (key, value, override) {
     var typeofKey = typeof key,
         typeofValue = typeof value;
 
@@ -18,7 +18,7 @@
 
       return setParamValue(key, value);
     } else if (typeofKey === 'object') {
-      return setParamsStringFromObject(key);
+      return setParamsStringFromObject(key, override);
     }
 
     return getParams();
@@ -38,7 +38,7 @@
   };
 
   Qurl.prototype.removeAll = function () {
-    setParamsStringFromObject({});
+    setParamsStringFromObject({}, true);
   };
 
   function setParamValue (key, value) {
@@ -53,8 +53,16 @@
     return getParams()[key];
   }
 
-  function setParamsStringFromObject (paramsObj) {
-    var paramsString = getParamStringFromObject(paramsObj);
+  function setParamsStringFromObject (newParamsObj, override) {
+    var paramsString, paramsObj,
+        mergedParamsObj = newParamsObj;
+
+    if (!override) {
+      paramsObj = getParams();
+      mergedParamsObj = mergeObjects(paramsObj, newParamsObj, true);
+    }
+
+    paramsString = getParamStringFromObject(mergedParamsObj);
 
     history.pushState(null, null, '?' + paramsString);
   }
@@ -175,6 +183,19 @@
         processKeyParts(keyParts, value, constructedParam);
       }
     }
+  }
+
+  function mergeObjects (obj, objToMerge, override) {
+    var prop;
+
+    for (prop in objToMerge) {
+      if (objToMerge.hasOwnProperty(prop)) { continue; }
+      if (obj[prop] && !override) { continue; }
+
+      obj[prop] = objToMerge[prop];
+    }
+
+    return obj;
   }
 
   function toOriginalType (s) {
