@@ -172,7 +172,7 @@
 
       finalPart = !keyParts.length;
 
-      keyPartValue = finalPart ? value : (keyArrayIndexPart ? [] : {});
+      keyPartValue = finalPart ? (value || null) : (keyArrayIndexPart ? [] : {});
       constructedParam = constructedParam || params[keyNamePart] || (params[keyNamePart] = keyPartValue);
 
       if (typeofConstructedParam === '[object Array]' || typeofConstructedParam === '[object Object]') {
