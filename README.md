@@ -21,6 +21,11 @@ Get the query parameters as an object.
 obj = url.query();
 ```
 
+Get query parameters as a string
+```js
+url.toString();
+```
+
 Get the value of a single query parameter by passing its key as an argument.
 
 ```js
@@ -44,6 +49,11 @@ Delete a query parameter.
 ```js
 url.remove('key');
 url.removeAll();
+```
+
+Toggle auto updating of URL history
+```js
+url.updateHistory = true;
 ```
 
 Version History

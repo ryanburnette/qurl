@@ -160,7 +160,7 @@
     var max, i, parameterParts, keyParts, value,
         decodedParameter, valueAsOriginalType,
         parameters = (queryString[0] === '?' ? queryString.substr(1) : queryString).split('&'),
-        params = {}; console.log('debug');
+        params = {};
 
     for (i = 0, max = parameters.length; i < max; i += 1) {
       decodedParameter = decodeURIComponent(parameters[i]);
