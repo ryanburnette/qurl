@@ -3,68 +3,91 @@
 
   var toString = Function.prototype.call.bind(Object.prototype.toString);
 
-  function Qurl () {
+  function Qurl (queryString, updateHistory) {
+    if ( !(this instanceof Qurl) ) {
+      return new Qurl(queryString);
+    }
 
+    this.queryString = queryString || location.search;
+    this.updateHistory = typeof updateHistory !== 'undefined' ? updateHistory : !queryString;
   }
 
   Qurl.prototype.query = function (key, value, override) {
-    var typeofKey = typeof key,
+    var paramsString,
+        params = getParams(this.queryString),
+        typeofKey = typeof key,
         typeofValue = typeof value;
 
     if (typeofKey === 'string') {
       if (typeofValue === 'undefined') {
-        return getParamValue(key);
+        return getParamValue(params, key);
       }
 
-      return setParamValue(key, value);
+      paramsString = setParamValue(params, key, value);
     } else if (typeofKey === 'object') {
-      return setParamsStringFromObject(key, override);
+      paramsString = setParamsStringFromObject(params, key, override);
     }
 
-    return getParams();
+    if (paramsString) {
+      this.queryString = paramsString;
+
+      if (this.updateHistory) {
+        updateHistoryFromString(paramsString);
+      }
+    }
+
+    return paramsString || params;
   };
 
   Qurl.prototype.remove = function (keys) {
     var i, max, params;
 
     keys = toString(keys) === '[object Array]' ? keys : [keys];
-    params = getParams();
+    params = getParams(this.queryString);
 
     for (i = 0, max = keys.length; i < max; i += 1) {
       delete params[keys[i]];
     }
 
-    setParamsStringFromObject(params);
+    this.queryString = setParamsStringFromObject(params);
+
+    if (this.updateHistory) {
+      updateHistoryFromString(this.queryString);
+    }
   };
 
   Qurl.prototype.removeAll = function () {
-    setParamsStringFromObject({}, true);
+    this.queryString = setParamsStringFromObject({}, true);
   };
 
-  function setParamValue (key, value) {
-    var params = getParams();
+  Qurl.prototype.toString = function () {
+    var params = getParams(this.queryString);
 
+    return getParamStringFromObject(params);
+  };
+
+  function updateHistoryFromString (paramsString) {
+    history.pushState(null, null, '?' + paramsString);
+  }
+
+  function setParamValue (params, key, value) {
     params[key] = value;
 
-    setParamsStringFromObject(params);
+    return setParamsStringFromObject(params);
   }
 
-  function getParamValue (key) {
-    return getParams()[key];
+  function getParamValue (params, key) {
+    return params[key];
   }
 
-  function setParamsStringFromObject (newParamsObj, override) {
-    var paramsString, paramsObj,
-        mergedParamsObj = newParamsObj;
+  function setParamsStringFromObject (params, newParamsObj, override) {
+    var mergedParamsObj = newParamsObj;
 
     if (!override) {
-      paramsObj = getParams();
-      mergedParamsObj = mergeObjects(paramsObj, newParamsObj, true);
+      mergedParamsObj = mergeObjects(params, newParamsObj, true);
     }
 
-    paramsString = getParamStringFromObject(mergedParamsObj);
-
-    history.pushState(null, null, '?' + paramsString);
+    return getParamStringFromObject(mergedParamsObj);
   }
 
   function getParamStringFromObject (paramsObj) {
@@ -133,11 +156,11 @@
     }
   }
 
-  function getParams () {
+  function getParams (queryString) {
     var max, i, parameterParts, keyParts, value,
         decodedParameter, valueAsOriginalType,
-        parameters = location.search.substr(1).split('&'),
-        params = {};
+        parameters = (queryString[0] === '?' ? queryString.substr(1) : queryString).split('&'),
+        params = {}; console.log('debug');
 
     for (i = 0, max = parameters.length; i < max; i += 1) {
       decodedParameter = decodeURIComponent(parameters[i]);
@@ -155,15 +178,11 @@
     return params;
 
     function processKeyParts (keyParts, value, constructedParam) {
-      var keyPart, keyNameParts, keyNamePart, keyArrayIndexPart,
-          keyArrayIndex, keyPartValue, finalPart,
-          typeofConstructedParam = toString(constructedParam);
-
-      keyPart = keyParts.shift();
-
-      keyNameParts = keyPart.split('[');
-      keyArrayIndexPart = keyNameParts[1];
-      keyNamePart = keyNameParts[0];
+      var keyArrayIndex, keyPartValue, finalPart,
+          keyPart = keyParts.shift(),
+          keyNameParts = keyPart.split('['),
+          keyArrayIndexPart = keyNameParts[1],
+          keyNamePart = keyNameParts[0];
 
       if (keyArrayIndexPart) {
         keyArrayIndex = keyArrayIndexPart.slice(0, -1);
@@ -175,7 +194,7 @@
       keyPartValue = finalPart ? (value || null) : (keyArrayIndexPart ? [] : {});
       constructedParam = constructedParam || params[keyNamePart] || (params[keyNamePart] = keyPartValue);
 
-      if (typeofConstructedParam === '[object Array]' || typeofConstructedParam === '[object Object]') {
+      if (constructedParam !== null && typeof constructedParam === 'object' && constructedParam !== params[keyNamePart]) {
         constructedParam = constructedParam[keyNamePart] || (constructedParam[keyNamePart] = keyPartValue);
       }
 

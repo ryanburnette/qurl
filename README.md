@@ -7,13 +7,13 @@ library makes use of [Window Location][2] and [pushState][1] to operate.
 Usage
 -----
 
-Create a new Qurl object.
+Create a new Qurl instance, accepts an optional queryString as a parameter to the constructor.
 
 ```js
-var url = Qurl.create();
+var url = new Qurl(/* queryString */);
+// or
+var url = Qurl(/* queryString */);
 ```
-
-There is only one method, `query` which performs the available tasks.
 
 Get the query parameters as an object.
 
@@ -30,13 +30,20 @@ key = url.query('key');
 Set the value for a query parameter.
 
 ```js
-url.query('key','value');
+url.query('key', 'value');
+url.query('Robby', {
+  age: 20,
+  friends : ['Martin', 'Mole', 'Mindy'],
+  stuffs : [{ foo: 'bar' }, { gum: 'ball' }],
+  even : { deeper : down : [1,2,3] }
+});
 ```
 
-Delete a query parameter by passing false as the second argument after the key.
+Delete a query parameter.
 
 ```js
-url.query('key',false);
+url.remove('key');
+url.removeAll();
 ```
 
 Version History
