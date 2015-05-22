@@ -1,7 +1,5 @@
-(function (window, location) {
+(function (exports, location) {
   'use strict';
-
-  var toString = Function.prototype.call.bind(Object.prototype.toString);
 
   function Qurl (queryString, updateHistory) {
     if ( !(this instanceof Qurl) ) {
@@ -42,7 +40,10 @@
   Qurl.prototype.remove = function (keys) {
     var i, max, params;
 
-    keys = toString(keys) === '[object Array]' ? keys : [keys];
+    if (!Array.isArray(keys)) {
+      keys = [keys];
+    }
+    
     params = getParams(this.queryString);
 
     for (i = 0, max = keys.length; i < max; i += 1) {
@@ -94,7 +95,7 @@
     var prop, part, max, value, joinedKeys,
         parts = [], i = 0, values = [];
 
-    if (toString(paramsObj) !== '[object Object]') {
+    if (!paramsObj || 'object' !== typeof paramsObj) {
       throw new TypeError('Invalid arguments supplied, paramsObj must be an object.');
     }
 
@@ -115,25 +116,22 @@
     return values.join('&');
 
     function traverse (obj, keyChain) {
-      var prop, value, max, i, name,
-          typeOfValue = toString(obj);
+      var value, max, i, name;
 
-      if (typeOfValue === '[object Array]') {
+      if (Array.isArray(obj)) {
         for (i = 0, max = obj.length; i < max; i += 1) {
           value = obj[i];
           name = '[' + i + ']';
 
           traverseProperty(name, value, keyChain, true);
         }
-      } else if (typeOfValue === '[object Object]') {
-        for (prop in obj) {
-          if (!obj.hasOwnProperty(prop)) { continue; }
-
+      } else if ('object' === typeof obj) {
+        Object.keys(obj).forEach(function (prop) {
           value = obj[prop];
           name = prop;
 
-          traverseProperty(name, value, keyChain);
-        }
+          traverseProperty(name, value, keyChain);          
+        });
       }
     }
 
@@ -205,26 +203,44 @@
   }
 
   function mergeObjects (obj, objToMerge, override) {
-    var prop;
-
-    for (prop in objToMerge) {
-      if (!objToMerge.hasOwnProperty(prop)) { continue; }
-      if (obj[prop] && !override) { continue; }
+    Object.keys(objToMerge).forEach(function (prop) {
+      if (obj[prop] && !override) { return; }
 
       obj[prop] = objToMerge[prop];
-    }
+    });
 
     return obj;
   }
 
+  // coerces the value from string back to a primitive
   function toOriginalType (s) {
-    return s === 'true' ? true : s === 'false' ? false : !isNaN(s) ? +s : s;
+    if ('true' === s) {
+      return true
+    }
+    if ('false' === s) {
+      return false
+    }
+    if ('null' === s) {
+      return null
+    }
+    if ('undefined' === s) {
+      // for those accidents, you know
+      return null
+    }
+    if (!isNaN(s)) {
+      // no, we don't allow scientific notation
+      return parseFloat(s, 10);
+    }
+    // must be a string
+    return s;
   }
-
+  
+  // allow users to avoid new where possible
+  Qurl.create = Qurl;
+  
   if (typeof module !== 'undefined' && 'exports' in module) {
-    module.exports = Qurl;
-  } else {
-    window.Qurl = Qurl;
+    module.exports = exports = Qurl;
   }
-
+  
+  exports.Qurl = Qurl;
 }(window, window.location)); //jshint ignore:line
