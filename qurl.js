@@ -36,7 +36,11 @@
       }
     }
 
-    return paramsString || params;
+    return params[key];
+  };
+
+  Qurl.prototype.scopeTo = function (key) {
+    return this.query.bind(this, key);
   };
 
   Qurl.prototype.remove = function (keys) {
