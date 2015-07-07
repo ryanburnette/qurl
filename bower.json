@@ -1,24 +1,23 @@
 {
   "name": "Qurl",
-  "main": "qurl.js",
-  "version": "0.1.2",
+  "main": "dist/qurl.min.js",
+  "version": "0.2.0",
   "homepage": "https://github.com/ryanburnette/Qurl",
   "authors": [
-    "Ryan Burnette <ryan.burnette@gmail.com>"
+    "Ryan Burnette <ryan.burnette@gmail.com>""
   ],
-  "description": "A browser JavaScript library for getting and setting query parameters.",
+  "description": "A browser JavaScript library for getting and setting query parameters, AMD compliant.",
   "keywords": [
     "query",
     "parameters",
     "javascript",
-    "browser"
+    "browser",
+    "get"
   ],
   "license": "Apache2",
   "ignore": [
     "**/.*",
-    "node_modules",
-    "bower_components",
-    "test",
-    "tests"
+	"node_modules",
+    "test"
   ]
 }

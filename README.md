@@ -42,6 +42,9 @@ url.query('key',false);
 Version History
 ---------------
 
++ v0.2.0 - 2015-07-97
+  + support for AMD, gulp builder
+
 + v0.1.2 - 2014-03-19
   + Only use pushState when supported
 

@@ -1,0 +1,39 @@
+<!DOCTYPE html>
+<html>
+  <head>
+    <meta charset="utf-8">
+    <title>Qurl AMD test</title>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/require.js/2.1.18/require.min.js"></script>
+    <style>
+        #code {
+            width: 50%;
+            height: 200px;
+            background-color: #ddd;
+            display: inline-block;
+        }
+    </style>
+  </head>
+  <body>
+    <h1>Parameters</h1>
+    <code id="code"></code>
+    <br/><a id="try" href="#">Try with parameters</a>
+    <script>
+        require(['../dist/qurl.min'], function (Qurl) {
+            var qurl = Qurl.create();
+            
+            function update() {
+                document.getElementById('code').innerHTML = JSON.stringify(qurl.query());
+            }
+            
+            document.getElementById('try').addEventListener('click', function (e) {
+                e.preventDefault();
+                
+                qurl.query('param1', Math.random());
+                qurl.query('param2', Math.random());
+                
+                update();
+            }, false);
+        });
+    </script>    
+  </body>
+</html>
