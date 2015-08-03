@@ -1,14 +1,18 @@
 (function (window, location, history) {
   'use strict';
 
-  var toString = Function.prototype.call.bind(Object.prototype.toString);
+  var warned = false,
+      toString = Function.prototype.call.bind(Object.prototype.toString);
 
-  function Qurl (queryString, updateHistory) {
+  function Qurl (options) {
+    var queryString = options.queryString || location.search,
+        updateHistory = options.updateHistory;
+
     if ( !(this instanceof Qurl) ) {
       return new Qurl(queryString);
     }
 
-    this.queryString = queryString || location.search;
+    this.queryString = queryString;
     this.updateHistory = typeof updateHistory !== 'undefined' ? updateHistory : !queryString;
   }
 
@@ -73,8 +77,9 @@
   };
 
   Qurl.prototype.updateHistoryFromString = function (paramsString) {
-    if (!this.isHistoryApiSupported() && window.console) {
-      window.console.warn('Unable to update history, api unsupported.');
+    if (!this.isHistoryApiSupported() && window.console && !warned) {
+      window.console.warn('Unable to update history, old browser - api unsupported. Set options.updateHistory to false.');
+      warned = true;
       return;
     }
 
