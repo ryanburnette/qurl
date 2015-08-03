@@ -5,6 +5,8 @@
       toString = Function.prototype.call.bind(Object.prototype.toString);
 
   function Qurl (options) {
+    options = options || {};
+
     var queryString = options.queryString || location.search,
         updateHistory = options.updateHistory;
 
