@@ -73,8 +73,9 @@
   };
 
   Qurl.prototype.updateHistoryFromString = function (paramsString) {
-    if (!this.isHistoryApiSupported()) {
-      throw new ReferenceError('history.pushState is unsupported.', 'qurl.js', 80);
+    if (!this.isHistoryApiSupported() && window.console) {
+      window.console.warn('Unable to update history, api unsupported.');
+      return;
     }
 
     history.pushState(null, null, '?' + paramsString);
