@@ -1,7 +1,7 @@
 {
   "name": "Qurl",
   "main": "qurl.js",
-  "version": "0.1.5",
+  "version": "0.1.6",
   "homepage": "https://github.com/ryanburnette/Qurl",
   "authors": [
     "Ryan Burnette <ryan.burnette@gmail.com>",
