@@ -18,7 +18,7 @@
     this.updateHistory = typeof updateHistory !== 'undefined' ? updateHistory : !queryString;
   }
 
-  Qurl.prototype.isHistoryApiSupported = !!history.pushState;
+  Qurl.prototype.isHistoryApiSupported = !!(history.pushState);
 
   Qurl.prototype.query = function (key, value, override) {
     var paramsString,
@@ -79,7 +79,7 @@
   };
 
   Qurl.prototype.updateHistoryFromString = function (paramsString) {
-    if (!this.isHistoryApiSupported() && window.console && !warned) {
+    if (!this.isHistoryApiSupported && window.console && !warned) {
       window.console.warn('Unable to update history, old browser - api unsupported. Set options.updateHistory to false.');
       warned = true;
       return;
