@@ -1,4 +1,4 @@
-(function (window, location) {
+(function (window, location, history) {
   'use strict';
 
   var toString = Function.prototype.call.bind(Object.prototype.toString);
@@ -11,6 +11,8 @@
     this.queryString = queryString || location.search;
     this.updateHistory = typeof updateHistory !== 'undefined' ? updateHistory : !queryString;
   }
+
+  Qurl.prototype.isHistoryApiSupported = !!history.pushState;
 
   Qurl.prototype.query = function (key, value, override) {
     var paramsString,
@@ -32,7 +34,7 @@
       this.queryString = paramsString;
 
       if (this.updateHistory) {
-        updateHistoryFromString(paramsString);
+        this.updateHistoryFromString(paramsString);
       }
     }
 
@@ -56,7 +58,7 @@
     this.queryString = setParamsStringFromObject(params);
 
     if (this.updateHistory) {
-      updateHistoryFromString(this.queryString);
+      this.updateHistoryFromString(this.queryString);
     }
   };
 
@@ -70,9 +72,13 @@
     return getParamStringFromObject(params);
   };
 
-  function updateHistoryFromString (paramsString) {
+  Qurl.prototype.updateHistoryFromString = function (paramsString) {
+    if (!this.isHistoryApiSupported()) {
+      throw new ReferenceError('history.pushState is unsupported.', 'qurl.js', 80);
+    }
+
     history.pushState(null, null, '?' + paramsString);
-  }
+  };
 
   function setParamValue (params, key, value) {
     params[key] = value;
@@ -231,4 +237,4 @@
     window.Qurl = Qurl;
   }
 
-}(window, window.location)); //jshint ignore:line
+}(window, window.location, window.history)); //jshint ignore:line
