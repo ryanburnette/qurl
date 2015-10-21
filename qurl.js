@@ -1,28 +1,40 @@
 (function (window, location, history) {
   'use strict';
 
-  var warned = false,
-      toString = Function.prototype.call.bind(Object.prototype.toString);
+  var toString = Function.prototype.call.bind(Object.prototype.toString);
 
   function Qurl (options) {
     options = options || {};
 
-    var queryString = options.queryString || location.search,
-        updateHistory = options.updateHistory;
-
     if ( !(this instanceof Qurl) ) {
-      return new Qurl(queryString);
+      return new Qurl(options);
     }
 
-    this.queryString = queryString;
-    this.updateHistory = typeof updateHistory !== 'undefined' ? updateHistory : !queryString;
+    this.updateHistory = options.updateHistory;
+    this.isStateReplaced = options.isStateReplaced;
+
+    this.getHistoryModifyMethod = function () {
+      return this.isStateReplaced ? history.replaceState : history.pushState;
+    };
+
+    this.getQueryString = function () {
+      return location.search;
+    };
   }
 
-  Qurl.prototype.isHistoryApiSupported = !!(history.pushState);
+  Qurl.prototype.go = function (url, state, title) {
+    var modifyMethod = this.getHistoryModifyMethod();
+
+    if (modifyMethod) { modifyMethod(state || null, title || '', url); }
+  };
+
+  Qurl.prototype.isHistoryApiSupported = function () {
+    return !!this.getHistoryModifyMethod();
+  };
 
   Qurl.prototype.query = function (key, value, override) {
-    var paramsString,
-        params = getParams(this.queryString),
+    var queryString = getQueryString(),
+        params = getParams(queryString),
         typeofKey = typeof key,
         typeofValue = typeof value;
 
@@ -31,17 +43,13 @@
         return getParamValue(params, key);
       }
 
-      paramsString = setParamValue(params, key, value);
+      queryString = setParamValue(params, key, value);
     } else if (typeofKey === 'object') {
-      paramsString = setParamsStringFromObject(params, key, override);
+      queryString = setParamsStringFromObject(params, key, override);
     }
 
-    if (paramsString) {
-      this.queryString = paramsString;
-
-      if (this.updateHistory) {
-        this.updateHistoryFromString(paramsString);
-      }
+    if (queryString && this.updateHistory) {
+      this.go(queryString);
     }
 
     return params[key];
@@ -52,19 +60,20 @@
   };
 
   Qurl.prototype.remove = function (keys) {
-    var i, max, params;
+    var i, max, params,
+        queryString = getQueryString();
 
     keys = toString(keys) === '[object Array]' ? keys : [keys];
-    params = getParams(this.queryString);
+    params = getParams(queryString);
 
     for (i = 0, max = keys.length; i < max; i += 1) {
       delete params[keys[i]];
     }
 
-    this.queryString = setParamsStringFromObject(params);
+    queryString = setParamsStringFromObject(params);
 
-    if (this.updateHistory) {
-      this.updateHistoryFromString(this.queryString);
+    if (this.updateHistory && queryString) {
+      this.go(queryString);
     }
   };
 
@@ -73,20 +82,15 @@
   };
 
   Qurl.prototype.toString = function () {
-    var params = getParams(this.queryString);
+    var queryString = getQueryString(),
+        params = getParams(queryString);
 
     return getParamStringFromObject(params);
   };
 
-  Qurl.prototype.updateHistoryFromString = function (paramsString) {
-    if (!this.isHistoryApiSupported && window.console && !warned) {
-      window.console.warn('Unable to update history, old browser - api unsupported. Set options.updateHistory to false.');
-      warned = true;
-      return;
-    }
-
-    history.pushState(null, null, '?' + paramsString);
-  };
+  function getQueryString () {
+    return location.search;
+  }
 
   function setParamValue (params, key, value) {
     params[key] = value;
