@@ -14,7 +14,9 @@
     this.isStateReplaced = options.isStateReplaced;
 
     this.getHistoryModifyMethod = function () {
-      return this.isStateReplaced ? history.replaceState : history.pushState;
+      var modifyMethod = this.isStateReplaced ? history.replaceState : history.pushState;
+
+      return modifyMethod && modifyMethod.bind(history);
     };
 
     this.getQueryString = function () {
