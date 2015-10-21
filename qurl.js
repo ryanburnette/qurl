@@ -27,7 +27,7 @@
   Qurl.prototype.go = function (url, state, title) {
     var modifyMethod = this.getHistoryModifyMethod();
 
-    if (modifyMethod) { modifyMethod(state || null, title || '', url); }
+    if (modifyMethod) { modifyMethod(state || null, title || '', '?' + url); }
   };
 
   Qurl.prototype.isHistoryApiSupported = function () {
