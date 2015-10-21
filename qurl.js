@@ -10,7 +10,7 @@
       return new Qurl(options);
     }
 
-    this.updateHistory = options.updateHistory;
+    this.updateHistory = options.updateHistory === void 0 ? true : options.updateHistory;
     this.isStateReplaced = options.isStateReplaced;
 
     this.getHistoryModifyMethod = function () {
