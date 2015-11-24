@@ -39,6 +39,8 @@
         params = getParams(queryString),
         typeofKey = typeof key,
         typeofValue = typeof value;
+        
+    if (!key) { return params; }
 
     if (typeofKey === 'string') {
       if (typeofValue === 'undefined') {
