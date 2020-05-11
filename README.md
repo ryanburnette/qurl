@@ -1,4 +1,7 @@
-# Qurl
+# [Qurl](https://github.com/ryanburnette/qurl)
+
+[![repo](https://img.shields.io/badge/repository-Github-black.svg?style=flat-square)](https://github.com/ryanburnette/Qurl)
+[![npm](https://img.shields.io/badge/package-NPM-green.svg?style=flat-square)](https://www.npmjs.com/package/@ryanburnette/qurl)
 
 A browser JavaScript library for getting and setting query parameters. Makes use of [Window
 Location][2] and [pushState][1].
