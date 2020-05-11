@@ -1,12 +1,12 @@
-(function (window, location, history) {
+(function () {
   'use strict';
 
   var toString = Function.prototype.call.bind(Object.prototype.toString);
 
-  function Qurl (options) {
+  function Qurl(options) {
     options = options || {};
 
-    if ( !(this instanceof Qurl) ) {
+    if (!(this instanceof Qurl)) {
       return new Qurl(options);
     }
 
@@ -27,7 +27,9 @@
   Qurl.prototype.go = function (url, state, title) {
     var modifyMethod = this.getHistoryModifyMethod();
 
-    if (modifyMethod) { modifyMethod(state || null, title || '', '?' + url); }
+    if (modifyMethod) {
+      modifyMethod(state || null, title || '', '?' + url);
+    }
   };
 
   Qurl.prototype.isHistoryApiSupported = function () {
@@ -36,11 +38,13 @@
 
   Qurl.prototype.query = function (key, value, override) {
     var queryString = getQueryString(),
-        params = getParams(queryString),
-        typeofKey = typeof key,
-        typeofValue = typeof value;
-        
-    if (!key) { return params; }
+      params = getParams(queryString),
+      typeofKey = typeof key,
+      typeofValue = typeof value;
+
+    if (!key) {
+      return params;
+    }
 
     if (typeofKey === 'string') {
       if (typeofValue === 'undefined') {
@@ -64,8 +68,10 @@
   };
 
   Qurl.prototype.remove = function (keys) {
-    var i, max, params,
-        queryString = getQueryString();
+    var i,
+      max,
+      params,
+      queryString = getQueryString();
 
     keys = toString(keys) === '[object Array]' ? keys : [keys];
     params = getParams(queryString);
@@ -87,26 +93,26 @@
 
   Qurl.prototype.toString = function () {
     var queryString = getQueryString(),
-        params = getParams(queryString);
+      params = getParams(queryString);
 
     return getParamStringFromObject(params);
   };
 
-  function getQueryString () {
+  function getQueryString() {
     return location.search;
   }
 
-  function setParamValue (params, key, value) {
+  function setParamValue(params, key, value) {
     params[key] = value;
 
     return setParamsStringFromObject(params);
   }
 
-  function getParamValue (params, key) {
+  function getParamValue(params, key) {
     return params[key];
   }
 
-  function setParamsStringFromObject (params, newParamsObj, override) {
+  function setParamsStringFromObject(params, newParamsObj, override) {
     var mergedParamsObj = newParamsObj;
 
     if (!override) {
@@ -116,16 +122,24 @@
     return getParamStringFromObject(mergedParamsObj);
   }
 
-  function getParamStringFromObject (paramsObj) {
-    var prop, part, max, value, joinedKeys,
-        parts = [], i = 0, values = [];
+  function getParamStringFromObject(paramsObj) {
+    var prop,
+      part,
+      max,
+      value,
+      joinedKeys,
+      parts = [],
+      i = 0,
+      values = [];
 
     if (toString(paramsObj) !== '[object Object]') {
       throw new TypeError('Invalid arguments supplied, paramsObj must be an object.');
     }
 
     for (prop in paramsObj) {
-      if (!paramsObj.hasOwnProperty(prop)) { continue ; }
+      if (!paramsObj.hasOwnProperty(prop)) {
+        continue;
+      }
 
       traverseProperty(prop, paramsObj[prop]);
     }
@@ -134,15 +148,19 @@
       part = parts[i];
       joinedKeys = part.keys.join('.');
 
-      value = encodeURIComponent(joinedKeys) + '=' +  encodeURIComponent(part.value);
+      value = encodeURIComponent(joinedKeys) + '=' + encodeURIComponent(part.value);
       values.push(value);
     }
 
     return values.join('&');
 
-    function traverse (obj, keyChain) {
-      var prop, value, max, i, name,
-          typeOfValue = toString(obj);
+    function traverse(obj, keyChain) {
+      var prop,
+        value,
+        max,
+        i,
+        name,
+        typeOfValue = toString(obj);
 
       if (typeOfValue === '[object Array]') {
         for (i = 0, max = obj.length; i < max; i += 1) {
@@ -153,7 +171,9 @@
         }
       } else if (typeOfValue === '[object Object]') {
         for (prop in obj) {
-          if (!obj.hasOwnProperty(prop)) { continue; }
+          if (!obj.hasOwnProperty(prop)) {
+            continue;
+          }
 
           value = obj[prop];
           name = prop;
@@ -163,7 +183,7 @@
       }
     }
 
-    function traverseProperty (propertyName, propertyValue, keyChain, appendName) {
+    function traverseProperty(propertyName, propertyValue, keyChain, appendName) {
       if (appendName) {
         keyChain = [].concat(keyChain);
         keyChain[keyChain.length - 1] += propertyName;
@@ -175,23 +195,30 @@
         traverse(propertyValue, keyChain);
       } else {
         parts.push({
-          keys : keyChain,
+          keys: keyChain,
           value: propertyValue
         });
       }
     }
   }
 
-  function getParams (queryString) {
-    var max, i, parameterParts, keyParts, value,
-        decodedParameter, valueAsOriginalType,
-        parameters = (queryString[0] === '?' ? queryString.substr(1) : queryString).split('&'),
-        params = {};
+  function getParams(queryString) {
+    var max,
+      i,
+      parameterParts,
+      keyParts,
+      value,
+      decodedParameter,
+      valueAsOriginalType,
+      parameters = (queryString[0] === '?' ? queryString.substr(1) : queryString).split('&'),
+      params = {};
 
     for (i = 0, max = parameters.length; i < max; i += 1) {
       decodedParameter = decodeURIComponent(parameters[i]);
 
-      if (!decodedParameter) { continue; }
+      if (!decodedParameter) {
+        continue;
+      }
 
       parameterParts = decodedParameter.split('=');
       keyParts = parameterParts[0].split('.');
@@ -203,12 +230,14 @@
 
     return params;
 
-    function processKeyParts (keyParts, value, constructedParam) {
-      var keyArrayIndex, keyPartValue, finalPart,
-          keyPart = keyParts.shift(),
-          keyNameParts = keyPart.split('['),
-          keyArrayIndexPart = keyNameParts[1],
-          keyNamePart = keyNameParts[0];
+    function processKeyParts(keyParts, value, constructedParam) {
+      var keyArrayIndex,
+        keyPartValue,
+        finalPart,
+        keyPart = keyParts.shift(),
+        keyNameParts = keyPart.split('['),
+        keyArrayIndexPart = keyNameParts[1],
+        keyNamePart = keyNameParts[0];
 
       if (keyArrayIndexPart) {
         keyArrayIndex = keyArrayIndexPart.slice(0, -1);
@@ -217,11 +246,17 @@
 
       finalPart = !keyParts.length;
 
-      keyPartValue = finalPart ? (value || null) : (keyArrayIndexPart ? [] : {});
-      constructedParam = constructedParam || params[keyNamePart] || (params[keyNamePart] = keyPartValue);
+      keyPartValue = finalPart ? value || null : keyArrayIndexPart ? [] : {};
+      constructedParam =
+        constructedParam || params[keyNamePart] || (params[keyNamePart] = keyPartValue);
 
-      if (constructedParam !== null && typeof constructedParam === 'object' && constructedParam !== params[keyNamePart]) {
-        constructedParam = constructedParam[keyNamePart] || (constructedParam[keyNamePart] = keyPartValue);
+      if (
+        constructedParam !== null &&
+        typeof constructedParam === 'object' &&
+        constructedParam !== params[keyNamePart]
+      ) {
+        constructedParam =
+          constructedParam[keyNamePart] || (constructedParam[keyNamePart] = keyPartValue);
       }
 
       if (!finalPart) {
@@ -230,12 +265,16 @@
     }
   }
 
-  function mergeObjects (obj, objToMerge, override) {
+  function mergeObjects(obj, objToMerge, override) {
     var prop;
 
     for (prop in objToMerge) {
-      if (!objToMerge.hasOwnProperty(prop)) { continue; }
-      if (obj[prop] && !override) { continue; }
+      if (!objToMerge.hasOwnProperty(prop)) {
+        continue;
+      }
+      if (obj[prop] && !override) {
+        continue;
+      }
 
       obj[prop] = objToMerge[prop];
     }
@@ -243,14 +282,19 @@
     return obj;
   }
 
-  function toOriginalType (s) {
+  function toOriginalType(s) {
     return s === 'true' ? true : s === 'false' ? false : !isNaN(s) ? +s : s;
   }
 
-  if (typeof module !== 'undefined' && 'exports' in module) {
+  if (typeof module !== 'undefined' && typeof module.exports !== 'undefined') {
     module.exports = Qurl;
   } else {
-    window.Qurl = Qurl;
+    if (typeof define === 'function' && define.amd) {
+      define([], function () {
+        return Qurl;
+      });
+    } else {
+      window.Qurl = Qurl;
+    }
   }
-
-}(window, window.location, window.history)); //jshint ignore:line
+})();

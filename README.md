@@ -1,13 +1,19 @@
-Qurl
-====
+# Qurl
 
-**Qurl** is a browser JavaScript library for getting and setting query parameters. This
-library makes use of [Window Location][2] and [pushState][1] to operate.
+A browser JavaScript library for getting and setting query parameters. Makes use of [Window
+Location][2] and [pushState][1].
 
-Usage
------
+## Usage
 
-Create a new Qurl instance, accepts an optional queryString as a parameter to the constructor.
+Include directly in the browser, or with a module bundler.
+
+```js
+// bundler approach
+var Qurl = require('@ryanburnette/qurl');
+// or include the Js and Qurl will be an attribute of window
+```
+
+Create a new instance, accepts an optional queryString as a parameter to the constructor.
 
 ```js
 var url = new Qurl(/* queryString */);
@@ -22,6 +28,7 @@ obj = url.query();
 ```
 
 Get query parameters as a string
+
 ```js
 url.toString();
 ```
@@ -52,22 +59,10 @@ url.removeAll();
 ```
 
 Toggle auto updating of URL history
+
 ```js
 url.updateHistory = true;
 ```
-
-Version History
----------------
-
-+ v0.1.2 - 2014-03-19
-  + Only use pushState when supported
-
-+ v0.1.1 - 2014-02-08
-  + Fixed a bug where the last query parameter could not be removed
-
-+ v0.1.0 - 2014-02-07
-  + Initial
-
 
 [1]: https://developer.mozilla.org/en-US/docs/Web/Guide/API/DOM/Manipulating_the_browser_history
 [2]: https://developer.mozilla.org/en-US/docs/Web/API/Window.location
