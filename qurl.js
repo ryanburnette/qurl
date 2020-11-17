@@ -89,6 +89,9 @@
 
   Qurl.prototype.removeAll = function () {
     this.queryString = setParamsStringFromObject({}, true);
+    if (this.updateHistory) {
+        this.go(this.queryString);
+    }
   };
 
   Qurl.prototype.toString = function () {
