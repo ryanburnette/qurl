@@ -82,7 +82,7 @@
 
     queryString = setParamsStringFromObject(params);
 
-    if (this.updateHistory && queryString) {
+    if (this.updateHistory) {
       this.go(queryString);
     }
   };
