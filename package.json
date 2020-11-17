@@ -1,6 +1,6 @@
 {
   "name": "@ryanburnette/qurl",
-  "version": "1.0.0",
+  "version": "1.0.1",
   "description": "A browser JavaScript library for getting and setting query parameters.",
   "main": "qurl.js",
   "repository": {
@@ -9,7 +9,9 @@
   },
   "contributors": [
     "Ryan Burnette <ryan.burnette@gmail.com> (https://ryanburnette.com)",
-    "Rob PW <rwhite@keystonesoftware.co.uk>"
+    "Rob PW <rwhite@keystonesoftware.co.uk>",
+    "AJ ONeal <coolaj86@gmail.com>",
+    "Ashok Poudel <ashok.poudel@gmail.com>"
   ],
   "license": "ISC",
   "bugs": {
